@@ -26,7 +26,13 @@ func Commit(message string, description string) {
 		return
 	}
 
-	cmd := exec.Command(fmt.Sprintf(`%s commit -m "%s" -m "%s" --quiet`, path, message, description))
+	cmd := exec.Command(
+		path,
+		"commit",
+		fmt.Sprintf(`-m "%s"`, message),
+		fmt.Sprintf(`-m "%s"`, description),
+		"--quiet",
+	)
 	err = cmd.Run()
 	CheckIfErrorFatal(err)
 }

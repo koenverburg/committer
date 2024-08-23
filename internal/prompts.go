@@ -37,6 +37,7 @@ func RunForm() CommitMessage {
 					huh.NewOption("docs", "📚docs"),
 					huh.NewOption("style", "💅style"),
 					huh.NewOption("refactor", "🎨refactor"),
+					huh.NewOption("generic", "⚡generic"),
 					huh.NewOption("chore", "🧹chore"),
 					huh.NewOption("test", "🧪test"),
 					huh.NewOption("hotfix", "🚑️hotfix"),
