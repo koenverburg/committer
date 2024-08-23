@@ -7,6 +7,8 @@ import (
 	"github.com/charmbracelet/huh"
 )
 
+// https://babakks.github.io/article/2020/07/03/emojis-in-git-commit-messages.html
+
 var (
 	ticket      string
 	changeType  string
@@ -32,19 +34,33 @@ func RunForm() CommitMessage {
 			huh.NewSelect[string]().
 				Title("Choose your types").
 				Options(
-					huh.NewOption("feat", "✨feat"),
-					huh.NewOption("fix", "🐛fix"),
-					huh.NewOption("docs", "📚docs"),
-					huh.NewOption("style", "💅style"),
-					huh.NewOption("refactor", "🎨refactor"),
-					huh.NewOption("generic", "⚡generic"),
-					huh.NewOption("chore", "🧹chore"),
-					huh.NewOption("test", "🧪test"),
-					huh.NewOption("hotfix", "🚑️hotfix"),
-					huh.NewOption("deprecate", "⚰️deprecate"),
-					huh.NewOption("perf", "⚡️perf"),
-					huh.NewOption("wip", "🚧wip"),
-					huh.NewOption("package", "📦package"),
+					huh.NewOption("🐞 bug", "🐞 bug"),
+					huh.NewOption("🐛 bugfix", "🐛  bugfix"),
+					huh.NewOption("🔨 improv", "🔨 improv"),
+					huh.NewOption("🛠 refactor", "🛠 refactor"),
+					huh.NewOption("🚧 wip", "🚧 wip"),
+					huh.NewOption("🚫 hack", "🚫 hack"),
+					huh.NewOption("⛔️ faulty", "⛔️ faulty"),
+					huh.NewOption("📦 package", "📦 package"),
+					huh.NewOption("🔥 trash", "🔥 trash"),
+					huh.NewOption("💣 deleting", "💣 deleting"),
+					huh.NewOption("🗑 removal", "🗑 removal"),
+					huh.NewOption("🎨 style", "🎨 style"),
+					huh.NewOption("💅 format", "💅 format"),
+					huh.NewOption("✨ improve", "✨ improve"),
+					huh.NewOption("👓 readability", "👓 readability"),
+					huh.NewOption("🌱 feat", "🌱 feat"),
+					huh.NewOption("🎉 feat", "🎉 feat"),
+					huh.NewOption("🚿 clean", "🚿 clean"),
+					huh.NewOption("🧪 test", "🧪 test"),
+					huh.NewOption("🚀 deploy", "🚀 deploy"),
+					huh.NewOption("📚 docs", "📚 docs"),
+					huh.NewOption("📝 draft", "📝 draft"),
+					huh.NewOption("⚠️ caution", "⚠️ caution"),
+					huh.NewOption("💀 crash", "💀 crash"),
+					huh.NewOption("☣️ danger", "☣️ danger"),
+					huh.NewOption("☠️ hazard", "☠️ hazard"),
+					huh.NewOption("⚙️ config", "⚙️ config"),
 				).
 				Value(&changeType),
 
