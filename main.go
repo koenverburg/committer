@@ -1,8 +1,7 @@
 package main
 
-import "github.com/koenverburg/committer/internal"
+import cmd "github.com/koenverburg/committer/cmd"
 
 func main() {
-	commitMessage := internal.RunForm()
-	internal.Commit(commitMessage.Msg, commitMessage.Description)
+	cmd.Execute()
 }

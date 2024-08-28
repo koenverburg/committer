@@ -1,10 +1,11 @@
-package internal
+package questions
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/huh"
+	"github.com/koenverburg/committer/helpers"
+	"github.com/koenverburg/committer/internal"
 )
 
 // https://babakks.github.io/article/2020/07/03/emojis-in-git-commit-messages.html
@@ -18,12 +19,12 @@ var (
 	description string
 )
 
-type CommitMessage struct {
+type Commit struct {
 	Msg         string
 	Description string
 }
 
-func RunForm() CommitMessage {
+func RunForm() Commit {
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
@@ -77,7 +78,7 @@ func RunForm() CommitMessage {
 			huh.NewMultiSelect[string]().
 				Title("Tags").
 				Options(
-					huh.NewOption("wip", "WIP").Selected(false),
+					huh.NewOption("wip", "#WIP").Selected(false),
 					huh.NewOption("skip ci", "[skip ci]").Selected(false),
 					huh.NewOption("Table flip", "(╯°□°)╯︵ ┻━┻").Selected(false),
 					huh.NewOption("Look of disapproval", "ಠ_ಠ").Selected(false),
@@ -92,11 +93,12 @@ func RunForm() CommitMessage {
 	)
 
 	err := form.Run()
-	CheckIfErrorFatal(err)
+	internal.CheckIfErrorFatal(err)
 
-	message := fmt.Sprintf("%s %s(%s) %s %s", ticket, changeType, scope, subject, strings.Join(tags, " "))
+	// message := fmt.Sprintf("%s %s(%s) %s %s", ticket, changeType, scope, subject, strings.Join(tags, " "))
+	message := helpers.CreateMessage(ticket, changeType, scope, subject, tags)
 
-	return CommitMessage{
+	return Commit{
 		Msg:         strings.TrimSpace(message),
 		Description: strings.TrimSpace(description),
 	}
