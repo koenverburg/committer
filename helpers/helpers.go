@@ -45,8 +45,10 @@ func Commit(message string, description string) {
 	cmd := exec.Command(
 		path,
 		"commit",
-		fmt.Sprintf(`-m%s`, message),
-		fmt.Sprintf(`-m%s`, description),
+		"-m",
+		message,
+		"-m",
+		description,
 		"--quiet",
 	)
 	err = cmd.Run()
