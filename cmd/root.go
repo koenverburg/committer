@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/koenverburg/committer/helpers"
+	"github.com/koenverburg/committer/git"
+	"github.com/koenverburg/committer/internal"
 	"github.com/koenverburg/committer/questions"
 	"github.com/spf13/cobra"
 )
@@ -14,8 +15,21 @@ var rootCmd = &cobra.Command{
 	Short: "Committer is a simple but powerfull commit message creator tool",
 	Long:  `to be written`,
 	Run: func(cmd *cobra.Command, args []string) {
-		commit := questions.RunForm()
-		helpers.Commit(commit.Msg, commit.Description)
+		commit := questions.StartCommitForm()
+
+		commitFlags := questions.StartCommitFlagForm()
+		pushFlags := questions.StartPushForm()
+
+		commitCmdStr := internal.FormatCommitString(commit.Msg, commit.Description, commitFlags.NoVerify)
+		pushCmddStr := internal.FormatPushString(pushFlags.PushWithForce)
+
+		err := git.Commit(commitCmdStr)
+		internal.CheckIfErrorFatal(err)
+
+		if pushFlags.Push {
+			err := git.Push(pushCmddStr)
+			internal.CheckIfErrorFatal(err)
+		}
 	},
 }
 

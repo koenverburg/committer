@@ -4,11 +4,15 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/huh"
-	"github.com/koenverburg/committer/helpers"
 	"github.com/koenverburg/committer/internal"
 )
 
 // https://babakks.github.io/article/2020/07/03/emojis-in-git-commit-messages.html
+
+type Result struct {
+	Msg         string
+	Description string
+}
 
 var (
 	ticket      string
@@ -19,12 +23,7 @@ var (
 	description string
 )
 
-type Commit struct {
-	Msg         string
-	Description string
-}
-
-func RunForm() Commit {
+func StartCommitForm() Result {
 	form := huh.NewForm(
 		huh.NewGroup(
 			huh.NewInput().
@@ -57,6 +56,7 @@ func RunForm() Commit {
 					huh.NewOption("🧪 test", "🧪 test"),
 					huh.NewOption("🚀 deploy", "🚀 deploy"),
 					huh.NewOption("📚 docs", "📚 docs"),
+
 					huh.NewOption("📝 draft", "📝 draft"),
 					huh.NewOption("💀 crash", "💀 crash"),
 					huh.NewOption("⚠️ caution", "⚠️ caution"),
@@ -76,6 +76,12 @@ func RunForm() Commit {
 				Placeholder("Oh boi I changes some files").
 				Value(&subject),
 
+			huh.NewInput().
+				Title("Longer description of the changes").
+				Value(&description),
+		),
+
+		huh.NewGroup(
 			huh.NewMultiSelect[string]().
 				Title("Tags").
 				Options(
@@ -86,10 +92,6 @@ func RunForm() Commit {
 				).
 				Limit(2).
 				Value(&tags),
-
-			huh.NewInput().
-				Title("Longer description of the changes").
-				Value(&description),
 		),
 	)
 
@@ -97,9 +99,9 @@ func RunForm() Commit {
 	internal.CheckIfErrorFatal(err)
 
 	// message := fmt.Sprintf("%s %s(%s) %s %s", ticket, changeType, scope, subject, strings.Join(tags, " "))
-	message := helpers.CreateMessage(ticket, changeType, scope, subject, tags)
+	message := internal.FormatCommitMessage(ticket, changeType, scope, subject, tags)
 
-	return Commit{
+	return Result{
 		Msg:         strings.TrimSpace(message),
 		Description: strings.TrimSpace(description),
 	}
