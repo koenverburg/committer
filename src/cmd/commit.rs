@@ -26,7 +26,6 @@ pub struct CommitOptions {
 }
 
 pub fn exec(args: CommitCommandArgs) -> Result<()> {
-    // Handle preset if provided
     if let Some(preset) = &args.preset {
         match preset.as_str() {
             "formatting" => return exec_formatting_preset(args),
@@ -39,7 +38,6 @@ pub fn exec(args: CommitCommandArgs) -> Result<()> {
         }
     }
 
-    // Regular commit flow
     let options = collect_commit_info(args.ticket, args.no_description)?;
     let commit_message = format_commit_message(&options);
 
@@ -54,7 +52,6 @@ pub fn exec(args: CommitCommandArgs) -> Result<()> {
         git_commit(&commit_message, args.no_verify)?;
         println!("Commit successful!");
 
-        // Push if requested
         if args.push {
             println!("Pushing to remote...");
             git_push(args.force_push)?;
@@ -67,9 +64,7 @@ pub fn exec(args: CommitCommandArgs) -> Result<()> {
     Ok(())
 }
 
-// Preset for formatting commits
 fn exec_formatting_preset(args: CommitCommandArgs) -> Result<()> {
-    // Use ticket from args or ask for it
     let ticket_number = if let Some(ticket) = args.ticket {
         ticket
     } else {
@@ -79,7 +74,6 @@ fn exec_formatting_preset(args: CommitCommandArgs) -> Result<()> {
             .interact()?
     };
 
-    // Use fixed values for the rest
     let scope = ScopeOption {
         name: "style",
         emoji: "💎",
@@ -111,7 +105,6 @@ fn exec_formatting_preset(args: CommitCommandArgs) -> Result<()> {
         git_commit(&commit_message, args.no_verify)?;
         println!("Commit successful!");
 
-        // Push if requested
         if args.push {
             println!("Pushing to remote...");
             git_push(args.force_push)?;
@@ -124,9 +117,7 @@ fn exec_formatting_preset(args: CommitCommandArgs) -> Result<()> {
     Ok(())
 }
 
-// Preset for demo commits
 fn exec_demo_preset(args: CommitCommandArgs) -> Result<()> {
-    // Use ticket from args or ask for it
     let ticket_number = if let Some(ticket) = args.ticket {
         ticket
     } else {
@@ -136,7 +127,6 @@ fn exec_demo_preset(args: CommitCommandArgs) -> Result<()> {
             .interact()?
     };
 
-    // Use fixed values for the rest
     let scope = ScopeOption {
         name: "demo",
         emoji: "🎮",
@@ -168,7 +158,6 @@ fn exec_demo_preset(args: CommitCommandArgs) -> Result<()> {
         git_commit(&commit_message, args.no_verify)?;
         println!("Commit successful!");
 
-        // Push if requested
         if args.push {
             println!("Pushing to remote...");
             git_push(args.force_push)?;
@@ -187,111 +176,109 @@ fn collect_commit_info(
 ) -> Result<CommitOptions> {
     println!("Please provide the following information for your commit:");
 
-    // Available scope options with emojis
     let scope_options = [
         ScopeOption {
             name: "feat",
             emoji: "✨",
-        }, // Sparkles
+        },
         ScopeOption {
             name: "fix",
             emoji: "🐛",
-        }, // Bug
+        },
         ScopeOption {
             name: "docs",
             emoji: "📚",
-        }, // Books
+        },
         ScopeOption {
             name: "style",
             emoji: "💎",
-        }, // Gem
+        },
         ScopeOption {
             name: "refactor",
             emoji: "♻️",
-        }, // Recycling
+        },
         ScopeOption {
             name: "perf",
             emoji: "🚀",
-        }, // Rocket
+        },
         ScopeOption {
             name: "test",
             emoji: "🧪",
-        }, // Test tube
+        },
         ScopeOption {
             name: "build",
             emoji: "🔨",
-        }, // Hammer
+        },
         ScopeOption {
             name: "ci",
             emoji: "👷",
-        }, // Construction worker
+        },
         ScopeOption {
             name: "chore",
             emoji: "🧹",
-        }, // Broom
+        },
         ScopeOption {
             name: "revert",
             emoji: "⏪",
-        }, // Rewind
+        },
         ScopeOption {
             name: "package",
             emoji: "📦",
-        }, // Package
+        },
         ScopeOption {
             name: "draft",
             emoji: "📝",
-        }, // Memo
+        },
         ScopeOption {
             name: "crash",
             emoji: "💥",
-        }, // Explosion
+        },
         ScopeOption {
             name: "caution",
             emoji: "⚠️",
-        }, // Warning
+        },
         ScopeOption {
             name: "danger",
             emoji: "🔥",
-        }, // Fire
+        },
         ScopeOption {
             name: "hazard",
             emoji: "☢️",
-        }, // Radioactive
+        },
         ScopeOption {
             name: "config",
             emoji: "⚙️",
-        }, // Gear
+        },
         ScopeOption {
             name: "hack",
             emoji: "🔧",
-        }, // Wrench
+        },
         ScopeOption {
             name: "bug",
             emoji: "🐞",
-        }, // Lady Beetle
+        },
         ScopeOption {
             name: "fix",
             emoji: "🩹",
-        }, // Adhesive Bandage
+        },
         ScopeOption {
             name: "wip",
             emoji: "🚧",
-        }, // Construction
+        },
         ScopeOption {
             name: "trash",
             emoji: "🗑️",
-        }, // Wastebasket
+        },
         ScopeOption {
             name: "deleting",
             emoji: "🧨",
-        }, // Firecracker
+        },
         ScopeOption {
             name: "removal",
             emoji: "🔥",
-        }, // Fire
+        },
     ];
 
-    // Ticket number - use override if provided
     let ticket_number = if let Some(ticket) = ticket_override {
         ticket
     } else {
@@ -301,24 +288,20 @@ fn collect_commit_info(
             .interact()?
     };
 
-    // Scope - using Select
     println!("Select the scope of your commit:");
     let scope_index = Select::new().items(&scope_options).default(0).interact()?;
 
     let scope = scope_options[scope_index];
 
-    // Subject
     let subject: String = Input::new()
         .with_prompt("Subject (ex: payments/tests/delivery)")
         .allow_empty(true)
         .interact()?;
 
-    // Message
     let message: String = Input::new()
         .with_prompt("Message (main commit message)")
         .interact()?;
 
-    // Description - skip if no_description flag is set
     let description = if no_description {
         String::new()
     } else {
@@ -326,7 +309,6 @@ fn collect_commit_info(
         let editor_result = Editor::new()
             .edit("# Enter a detailed description of your changes\n# Lines starting with '#' will be ignored")?;
 
-        // Remove comment lines from description
         editor_result
             .unwrap_or_default()
             .lines()
@@ -335,7 +317,6 @@ fn collect_commit_info(
             .join("\n")
     };
 
-    // Tags - first get available types
     let available_tags = vec!["[skip ci]", "(╯°□°)╯︵ ┻━┻"];
 
     println!("Select tags that apply to this commit:");
