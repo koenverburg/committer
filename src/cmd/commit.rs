@@ -310,6 +310,7 @@ fn collect_commit_info(
     // Subject
     let subject: String = Input::new()
         .with_prompt("Subject (ex: payments/tests/delivery)")
+        .allow_empty(true)
         .interact()?;
 
     // Message
@@ -357,7 +358,7 @@ fn collect_commit_info(
 
 pub fn format_commit_message(options: &CommitOptions) -> String {
     let ticket_prefix = if !options.ticket_number.is_empty() {
-        format!("[{}] ", options.ticket_number)
+        format!("{} ", options.ticket_number)
     } else {
         String::new()
     };
@@ -368,17 +369,23 @@ pub fn format_commit_message(options: &CommitOptions) -> String {
         String::new()
     };
 
+    let subject_formatted = if !options.subject.is_empty() {
+        format!("({}):", options.subject.to_string())
+    } else {
+        ":".to_string()
+    };
+
     let main_line = format!(
-        "{}{} {}: {}{}",
-        ticket_prefix, options.scope.emoji, options.scope.name, options.subject, tags_suffix
+        "{}{}{}{}",
+        ticket_prefix, options.scope.emoji, options.scope.name, subject_formatted
     );
 
     if options.description.trim().is_empty() {
-        return format!("{} ({})", main_line, options.message);
+        return format!("{} {}{}", main_line, options.message, tags_suffix);
     } else {
         return format!(
-            "{} ({})\n\n{}",
-            main_line, options.message, options.description
+            "{} {} {}\n\n{}",
+            main_line, options.message, tags_suffix, options.description
         );
     }
 }
