@@ -370,7 +370,7 @@ pub fn format_commit_message(options: &CommitOptions) -> String {
     };
 
     let subject_formatted = if !options.subject.is_empty() {
-        format!("({}):", options.subject.to_string())
+        format!("({}):", options.subject)
     } else {
         ":".to_string()
     };
@@ -381,12 +381,12 @@ pub fn format_commit_message(options: &CommitOptions) -> String {
     );
 
     if options.description.trim().is_empty() {
-        return format!("{} {}{}", main_line, options.message, tags_suffix);
+        format!("{} {}{}", main_line, options.message, tags_suffix)
     } else {
-        return format!(
+        format!(
             "{} {} {}\n\n{}",
             main_line, options.message, tags_suffix, options.description
-        );
+        )
     }
 }
 

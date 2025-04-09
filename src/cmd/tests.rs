@@ -92,7 +92,10 @@ mod tests {
         };
 
         let commit_message = format_commit_message(&options);
-        assert_eq!(commit_message, "XYZ-789 💎style(format code): apply prettier formatting");
+        assert_eq!(
+            commit_message,
+            "XYZ-789 💎style(format code): apply prettier formatting"
+        );
         assert!(commit_message.contains("XYZ-789"));
         assert!(commit_message.contains("💎style"));
         assert!(commit_message.contains("(format code):"));
