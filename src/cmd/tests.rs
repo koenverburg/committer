@@ -68,11 +68,11 @@ mod tests {
         };
 
         let commit_message = format_commit_message(&options);
-        assert_eq!(commit_message, "DEF-456 📚docs(update README): add installation instructions  - [skip ci]\n\nAdded detailed installation steps");
+        assert_eq!(commit_message, "DEF-456 📚docs(update README): add installation instructions [skip ci]\n\nAdded detailed installation steps");
         assert!(commit_message.contains("DEF-456"));
         assert!(commit_message.contains("📚docs"));
         assert!(commit_message.contains("update README"));
-        assert!(commit_message.contains("- [skip ci]"));
+        assert!(commit_message.contains("[skip ci]"));
 
         Ok(())
     }

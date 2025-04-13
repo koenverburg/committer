@@ -52,11 +52,18 @@ pub fn exec(args: CommitCommandArgs) -> Result<()> {
         git_commit(&commit_message, args.no_verify)?;
         println!("Commit successful!");
 
-        if args.push {
+        if args.push & !args.push_no_verify {
             println!("Pushing to remote...");
-            git_push(args.force_push)?;
+            git_push(args.force_push, args.push_no_verify)?;
             println!("Push successful!");
         }
+
+        if args.push & args.push_no_verify {
+            println!("Pushing without verify to remote...");
+            git_push(args.force_push, args.push_no_verify)?;
+            println!("Push successful!");
+        }
+
     } else {
         println!("Commit canceled.");
     }
@@ -107,7 +114,7 @@ fn exec_formatting_preset(args: CommitCommandArgs) -> Result<()> {
 
         if args.push {
             println!("Pushing to remote...");
-            git_push(args.force_push)?;
+            git_push(args.force_push, args.push_no_verify)?;
             println!("Push successful!");
         }
     } else {
@@ -160,7 +167,7 @@ fn exec_demo_preset(args: CommitCommandArgs) -> Result<()> {
 
         if args.push {
             println!("Pushing to remote...");
-            git_push(args.force_push)?;
+            git_push(args.force_push, args.push_no_verify)?;
             println!("Push successful!");
         }
     } else {
@@ -317,7 +324,12 @@ fn collect_commit_info(
             .join("\n")
     };
 
-    let available_tags = vec!["[skip ci]", "(╯°□°)╯︵ ┻━┻"];
+    let available_tags = vec![
+        "[skip ci]",
+        "(╯°□°)╯︵ ┻━┻",
+        "[start ci]",
+        "[start deploy]"
+    ];
 
     println!("Select tags that apply to this commit:");
     let selections = MultiSelect::new().items(&available_tags).interact()?;
@@ -345,7 +357,7 @@ pub fn format_commit_message(options: &CommitOptions) -> String {
     };
 
     let tags_suffix = if !options.tags.is_empty() {
-        format!(" - {}", options.tags.join(", "))
+        format!("{}", options.tags.join(", "))
     } else {
         String::new()
     };
@@ -388,12 +400,16 @@ fn git_commit(message: &str, no_verify: bool) -> Result<()> {
     Ok(())
 }
 
-fn git_push(force: bool) -> Result<()> {
+fn git_push(force: bool, no_verify: bool) -> Result<()> {
     let mut cmd = ProcessCommand::new("git");
     cmd.arg("push");
 
     if force {
         cmd.arg("--force");
+    }
+
+    if no_verify {
+        cmd.arg("--no-verify");
     }
 
     let status = cmd.status()?;

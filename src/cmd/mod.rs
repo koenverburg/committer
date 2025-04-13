@@ -20,6 +20,9 @@ pub struct CommitCommandArgs {
     pub push: bool,
 
     #[arg(long)]
+    pub push_no_verify: bool,
+
+    #[arg(long)]
     pub no_verify: bool,
 
     #[arg(long)]
