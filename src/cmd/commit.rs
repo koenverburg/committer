@@ -325,10 +325,9 @@ fn collect_commit_info(
     };
 
     let available_tags = vec![
-        "[skip ci]",
-        "(╯°□°)╯︵ ┻━┻",
-        "[start ci]",
-        "[start deploy]"
+        "#skip-ci",
+        "#start-ci",
+        "#start-deploy"
     ];
 
     println!("Select tags that apply to this commit:");
